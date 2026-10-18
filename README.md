@@ -6,11 +6,12 @@ This is the demo repository of [BitBounty](https://github.com/Djbrl/bitbounty): 
 
 ## Use it
 ```js
-import { formatXof, formatSats, xofToSats } from "./src/fcfa.js";
+import { formatXof, formatSats, parseXof, xofToSats } from "./src/fcfa.js";
 import { t } from "./src/i18n.js";
 
 formatXof(25000);              // "25 000 FCFA"
 formatXof(1500000);            // "1 500 000 FCFA"
+parseXof("25.000 F CFA");      // 25000 (throws a RangeError if it is not an amount)
 xofToSats(10000, 62_000_000);  // 16129 (rate in FCFA per bitcoin)
 formatSats(16129);             // "16 129 sats"
 t("fr", "welcome", { name: "Awa" }); // "Bienvenue, Awa !"
