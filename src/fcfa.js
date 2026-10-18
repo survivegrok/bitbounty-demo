@@ -28,3 +28,26 @@ export function xofToSats(xof, xofPerBtc) {
 export function satsToXof(sats, xofPerBtc) {
   return Math.round((sats * xofPerBtc) / SATS_PER_BTC);
 }
+
+/**
+ * Short FCFA amount for dashboards and small screens: 950 → "950 FCFA", 25000 → "25 k FCFA",
+ * 1500000 → "1,5 M FCFA". Below 1 000 it is formatXof; above, at most one decimal, rounded,
+ * with a comma as the decimal separator (French style). 999 950 rounds up to "1 M FCFA".
+ */
+export function formatXofShort(amount) {
+  if (!Number.isInteger(amount)) throw new TypeError(`expected a whole number, got ${amount}`);
+  const abs = Math.abs(amount);
+  if (abs < 1000) return formatXof(amount);
+  const sign = amount < 0 ? "-" : "";
+  // Tenths of a thousand, computed on integers so 1 550 000 does not become 1,5 by float error.
+  let tenths = Math.round(abs / 100);
+  let unit = "k";
+  if (tenths >= 10_000) {
+    tenths = Math.round(abs / 100_000);
+    unit = "M";
+  }
+  const whole = Math.trunc(tenths / 10);
+  const decimal = tenths % 10;
+  const number = decimal === 0 ? groupThousands(whole) : `${groupThousands(whole)},${decimal}`;
+  return `${sign}${number} ${unit} FCFA`;
+}
